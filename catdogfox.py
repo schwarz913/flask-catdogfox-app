@@ -1,5 +1,4 @@
 import os
-import cv2
 from flask import Flask, request, redirect, render_template, flash
 from werkzeug.utils import secure_filename
 from tensorflow.keras.models import Sequential, load_model
@@ -44,10 +43,7 @@ def upload_file():
             filepath = os.path.join(UPLOAD_FOLDER, filename)
 
             #受け取った画像を読み込み、np形式に変換
-            # img = image.load_img(filepath, color_mode='grayscale', target_size=(image_size,image_size))
-            img = cv2.imread(filepath)
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            img = cv2.resize(img, (image_size, image_size))
+            img = image.load_img(filepath, color_mode='rgb', target_size=(image_size,image_size))
             img = image.img_to_array(img)
             data = np.array([img])
             #変換したデータをモデルに渡して予測する
