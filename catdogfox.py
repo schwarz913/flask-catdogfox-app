@@ -10,22 +10,18 @@ import numpy as np
 # 猫、犬、狐 判別器
 #==========================================================
 classes = ["猫","犬","狐"]
-image_size = 100
+image_size = 128
 
 UPLOAD_FOLDER = "uploads"
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'bmp'])
 
 app = Flask(__name__)
-
-# app.secret_key = "your_secret_key_here"  
-# submitボタンを押した際にエラーが出た場合上の行のコメントアウトを削除し、your_secret_key_hereに任意の文字列（例:aidemy)を指定し、再度アプリケーションを実行してください。
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 #　学習済みモデルをロード
 model = load_model('./catdogfox_model.keras')
-
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
@@ -54,14 +50,15 @@ def upload_file():
             result = model.predict(data)[0]
             predicted = result.argmax()
             pred_answer = "これは " + classes[predicted] + " です"
+            pred_upload_image = "../" + filepath
 
-            return render_template("index.html",answer=pred_answer)
+            return render_template("index.html", answer=pred_answer, upload_image=pred_upload_image)
 
-    return render_template("index.html",answer="")
+    return render_template("index.html", answer="", upload_image="")
 
 
-# if __name__ == "__main__":
-#     app.run()
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 8080))
-    app.run(host ='0.0.0.0',port = port)
+    app.run()
+# if __name__ == "__main__":
+#     port = int(os.environ.get('PORT', 8080))
+#     app.run(host ='0.0.0.0',port = port)
