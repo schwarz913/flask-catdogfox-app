@@ -9,7 +9,7 @@
 </head>
 <body>
     <header>   
-        <a class="header-logo" href="#">猫・犬・狐　判別アプリ</a>
+        <div style="text-align: left;"></div><a class="header-logo" href="#">猫・犬・狐　判別アプリ</a></div>
     </header>
 
     <div class="main">    
@@ -19,12 +19,15 @@
             <input class="file_choose" type="file" name="file">
             <input class="btn" value="submit!" type="submit">
         </form>
-        <!--<img class="upload_img" src={{upload_image}}>-->
+        {% if img_url %}
         <div class="answer"><h2>{{answer}}</h2></div>
+        <div style="text-align: center;">
+            <img class="upload_img" src={{img_url}} width="300">
+        </div>
+        {% endif %}
     </div>
 
-    <footer>
-        <small>&copy;</small>   
+    <footer> 
     </footer>
 </body>
 </html>

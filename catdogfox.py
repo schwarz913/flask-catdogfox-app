@@ -1,6 +1,7 @@
 import os
-from flask import Flask, request, redirect, render_template, flash
+from flask import Flask, request, redirect, render_template, flash, url_for
 from werkzeug.utils import secure_filename
+import shutil
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.preprocessing import image
 
@@ -13,6 +14,7 @@ classes = ["猫","犬","狐"]
 image_size = 128
 
 UPLOAD_FOLDER = "uploads"
+STATIC_FOLDER = "static"
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'bmp'])
 
 app = Flask(__name__)
@@ -37,9 +39,13 @@ def upload_file():
             return redirect(request.url)
         
         if file and allowed_file(file.filename):
+            # uploadされた画像ファイルを保存
             filename = secure_filename(file.filename)
             file.save(os.path.join(UPLOAD_FOLDER, filename))
+            # staticフォルダに画像ファイルをコピー
             filepath = os.path.join(UPLOAD_FOLDER, filename)
+            static_filepath = os.path.join(STATIC_FOLDER, filename)
+            shutil.copy(filepath, static_filepath)
 
             # 受け取った画像を読み込み、np形式に変換
             img = image.load_img(filepath, color_mode='rgb', target_size=(image_size,image_size))
@@ -50,11 +56,12 @@ def upload_file():
             result = model.predict(data)[0]
             predicted = result.argmax()
             pred_answer = "これは " + classes[predicted] + " です"
-            pred_upload_image = "../" + filepath
+            img_url = url_for(STATIC_FOLDER, filename=filename)
+            #img_url = url_for(UPLOAD_FOLDER, filename=filename)
 
-            return render_template("index.html", answer=pred_answer, upload_image=pred_upload_image)
+            return render_template("index.html", answer=pred_answer, img_url=img_url)
 
-    return render_template("index.html", answer="", upload_image="")
+    return render_template("index.html", answer="", img_url="")
 
 
 # if __name__ == "__main__":

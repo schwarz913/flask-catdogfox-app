@@ -19,7 +19,9 @@ header {
 }
 
 .main {
-    height: 370px;
+    /*height: 370px;*/
+    min-height: 370px;      /* 最低高さを設定する */
+    padding-bottom: 30px;   /* 余白を追加して見やすく */
 }
 
 h2 {
